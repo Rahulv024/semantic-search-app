@@ -10,8 +10,16 @@ api_key = "pcsk_2zkszn_UbXuT2K7parwLi3U2QEKmsw2uBr43kqgrFig4nEuC3b81CFRbeXdm98ND
 # Load the IMDB dataset from GitHub
 @st.cache_data
 def load_data():
-    url = "https://raw.githubusercontent.com/Rahulv024/semantic-search-app/main/imdb_top_1000.csv"  # Update if your repo path is different
-    return pd.read_csv(url)
+    url = "https://raw.githubusercontent.com/Rahulv024/semantic-search-app/main/imdb_top_1000.csv"
+    st.write(f"Fetching dataset from: {url}")
+    try:
+        df = pd.read_csv(url)
+        st.write("Dataset loaded successfully!")
+        return df
+    except Exception as e:
+        st.error(f"Error loading dataset: {e}")
+        return pd.DataFrame()
+
 
 df = load_data()
 
