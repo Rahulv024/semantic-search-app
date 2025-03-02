@@ -1,8 +1,8 @@
 import pandas as pd
+import streamlit as st
 from sentence_transformers import SentenceTransformer
 import pinecone
 from pinecone import Pinecone, ServerlessSpec
-from IPython.display import display
 
 # Replace with your actual Pinecone API key
 api_key = "pcsk_2zkszn_UbXuT2K7parwLi3U2QEKmsw2uBr43kqgrFig4nEuC3b81CFRbeXdm98NDbc1GkR"
@@ -39,19 +39,19 @@ if index_name not in [i.name for i in pc.list_indexes()]:
         metric="cosine",
         spec=ServerlessSpec(cloud="aws", region="us-east-1")
     )
-    print(f"Index '{index_name}' created successfully.")
+    st.write(f"Index '{index_name}' created successfully.")
 else:
-    print(f"Index '{index_name}' already exists.")
+    st.write(f"Index '{index_name}' already exists.")
 
 # Connect to Pinecone index
 index = pc.Index(index_name)
-print("Connected to Pinecone index.")
+st.write("Connected to Pinecone index.")
 
 # Upload embeddings to Pinecone
 for i, row in df.iterrows():
     index.upsert([(str(i), row['embedding'], {'title': row['Series_Title'], 'Genre': row['Genre'], 'overview': row['Overview']})])
 
-print("Data uploaded to Pinecone.")
+st.write("Data uploaded to Pinecone.")
 
 # Function to Search Movies
 def search_movies(query, top_k=5):
@@ -72,10 +72,15 @@ def search_movies(query, top_k=5):
 
     return pd.DataFrame(movie_results)
 
-# Example search query
-query = "A thrilling sci-fi adventure with space battles"
-search_results = search_movies(query)
+# Streamlit UI
+st.title("🎬 IMDB Movie Recommendation System")
 
-# Display the search results
-print("Movie Recommendations based on your query:")
-display(search_results)
+# User input for search query
+query = st.text_input("Describe the type of movie you want to watch:")
+
+if query:
+    search_results = search_movies(query)
+
+    # Display results in Streamlit
+    st.subheader("🎥 Recommended Movies:")
+    st.dataframe(search_results)
