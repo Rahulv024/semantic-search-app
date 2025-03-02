@@ -7,9 +7,13 @@ from pinecone import Pinecone, ServerlessSpec
 # Replace with your actual Pinecone API key
 api_key = "pcsk_2zkszn_UbXuT2K7parwLi3U2QEKmsw2uBr43kqgrFig4nEuC3b81CFRbeXdm98NDbc1GkR"
 
-# Load the IMDB dataset
-file_path = r"C:\Users\rahul\OneDrive\Desktop\2nd Sem\Machine learning\Sematic_search\imdb_top_1000.csv"
-df = pd.read_csv(file_path)
+# Load the IMDB dataset from GitHub
+@st.cache_data
+def load_data():
+    url = "https://raw.githubusercontent.com/Rahulv024/semantic-search-app/main/imdb_top_1000.csv"  # Update if your repo path is different
+    return pd.read_csv(url)
+
+df = load_data()
 
 # Convert necessary columns to string and handle missing values
 df['Series_Title'] = df['Series_Title'].astype(str).fillna("")
